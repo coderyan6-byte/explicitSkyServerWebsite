@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<script src="Banner.js"></script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Support — explicitSky</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Russo+One&display=swap');
+:root{--bg:#080a10;--panel:#10151e;--panel2:#0b0f16;--text:#f7f7fb;--muted:#969eae;--purple:#793cff;--purple2:#a069ff;--line:#252c38}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}.container{width:min(1120px,calc(100% - 36px));margin:auto}nav{height:76px;border-bottom:1px solid var(--line);background:#080a10;display:flex;align-items:center}.inner{display:flex;align-items:center;justify-content:space-between}.logo{font:23px 'Russo One',sans-serif}.logo span{color:var(--purple2)}.links{display:flex;gap:28px;font-size:11px;font-weight:800}.links a{position:relative;opacity:.78}.links a:after{content:'';position:absolute;left:0;right:0;height:2px;bottom:-12px;background:var(--purple2);transform:scaleX(0);transition:.18s}.links a:hover,.links a.active{opacity:1}.links a:hover:after,.links a.active:after{transform:scaleX(1)}.play{font-size:11px;font-weight:800;padding:11px 16px;border:1px solid #34265c;border-radius:5px;color:#d5c7ff;background:#171020}.crumbbar{height:48px;border-bottom:1px solid var(--line);background:#0b0e15}.crumbbar .container{height:100%;display:flex;align-items:center;gap:10px;font-size:11px;color:#727b8b}.crumbbar a:hover{color:var(--purple2)}.crumbbar b{color:#c8ccd5;font-weight:600}main{padding:46px 0 70px}.page{max-width:1050px}.title{margin-bottom:30px;border-bottom:1px solid var(--line);padding-bottom:27px}.eyebrow{font-size:10px;font-weight:800;letter-spacing:.8px;color:var(--purple2)}h1{font:36px 'Russo One',sans-serif;margin:8px 0 10px;letter-spacing:.3px}.title p{max-width:720px;color:var(--muted);font-size:13px;line-height:1.7}.layout{display:grid;grid-template-columns:minmax(0,700px) 310px;gap:25px;align-items:start}.panel{background:var(--panel);border:1px solid var(--line);border-radius:7px}.form{padding:30px;background:#fff;color:#171a21;border-color:#e3e5ea}.form h2,.side h2{font:17px 'Russo One',sans-serif}.form .form-intro{color:#697180}.form label{color:#252a33}.form .hint{color:#7b8491}.form .privacy{background:#f6f7f9;border-color:#e1e4e9;color:#6f7885}.form .status{color:#6f7885}.form-intro{font-size:11px;color:var(--muted);margin:8px 0 28px;line-height:1.6}.field{margin-bottom:21px}label{display:flex;gap:7px;align-items:center;font-size:10px;font-weight:800;margin-bottom:8px;color:#dfe3ea}label span{font-size:9px;color:#737c8b;font-weight:600;text-transform:none}.input,textarea,select{width:100%;border:1px solid #d5d9df;background:#fff;color:#20242c;border-radius:5px;padding:13px 14px;outline:0;transition:.18s;font-size:12px}.input::placeholder,textarea::placeholder{color:#9299a4}.input:focus,textarea:focus,select:focus{border-color:var(--purple2);box-shadow:0 0 0 3px rgba(121,60,255,.11)}textarea{min-height:180px;resize:vertical;line-height:1.6}.select-wrap{position:relative}.select-wrap:after{content:'⌄';position:absolute;right:14px;top:12px;color:#68717e;pointer-events:none}.hint{font-size:9px;color:#687180;margin-top:6px}.privacy{display:flex;gap:9px;padding:12px;background:#0b0e15;border:1px solid #202733;border-radius:5px;color:#777f8d;font-size:9px;line-height:1.5}.submit-row{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:22px}.btn{border:0;border-radius:5px;padding:13px 20px;color:white;font-size:10px;font-weight:800;cursor:pointer;transition:.2s}.primary{background:linear-gradient(135deg,#6c2eff,#8b4fff);box-shadow:0 8px 25px rgba(121,60,255,.22)}.primary:hover{transform:translateY(-1px);box-shadow:0 11px 30px rgba(121,60,255,.38)}.status{font-size:9px;color:#737c8b}.status.ok{color:#a069ff}.status.error{color:#ff6974}.success{display:none;margin-top:17px;padding:12px;border:1px solid #4a3280;background:#171126;border-radius:5px;font-size:10px;color:#d4c5ff}.success.show{display:block}.side{padding:22px}.sideintro{font-size:10px;color:var(--muted);line-height:1.6;margin:8px 0 17px}.tip{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line);font-size:10px;color:#aeb5c2;line-height:1.5}.tip b{width:20px;height:20px;flex:none;display:grid;place-items:center;border-radius:50%;background:#1c1530;color:#ad82ff;font-size:9px}.discord{display:block;margin-top:18px;padding:14px;border-radius:5px;background:#171022;border:1px solid #33244f}.discord strong{display:block;font-size:10px;color:#d9ccff}.discord small{display:block;margin-top:5px;color:#858d9c;font-size:9px}.discord:hover{border-color:#5a3b91}.help{margin-top:15px;padding:19px}.help h3{font:12px 'Russo One',sans-serif;margin-bottom:7px}.help a{display:flex;justify-content:space-between;padding:11px 0;border-top:1px solid var(--line);font-size:10px;color:#aeb5c2}.help a:hover{color:var(--purple2)}.help span{color:#70798a}footer{text-align:center;padding:28px;border-top:1px solid var(--line);color:#626a78;font-size:9px}@media(max-width:850px){.links{display:none}.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;gap:15px}.side .discord{grid-column:1/-1}.help{margin-top:0}}@media(max-width:560px){.container{width:calc(100% - 24px)}.play{display:none}h1{font-size:29px}.form{padding:21px}.side{display:block}.help{margin-top:15px}.submit-row{flex-direction:column;align-items:stretch}.btn{width:100%}}
+</style>
+</head>
+<body>
+<nav><div class="container inner"><a class="logo" href="index">explicit<span>Sky</span></a><div class="links"><a href="index">HOME</a><a href="STAFF">STAFF</a><a href="store">STORE</a><a href="index.html#vote">VOTE</a><a href="index.html#discord">DISCORD</a><a class="active" href="Support">SUPPORT</a></div><a class="play" href="index.html#join">PLAY NOW ↗</a></div></nav>
+<div class="crumbbar"><div class="container"><a href="Support.html">Support</a><span>›</span><b>Submit a request</b></div></div>
+<main><div class="container page">
+<section class="title"><div><div class="eyebrow">EXPLICITSKY SUPPORT CENTER</div><h1>SUBMIT A REQUEST</h1><p>in-game problem, a purchase, or something else? Send us a request and our team will take a look.</p></div></section>
+<div class="layout">
+<section class="panel form"><h2>YOUR REQUEST</h2><p class="form-intro">Please enter the details below. The more information you provide, the faster we can help.</p>
+<form id="supportForm"><div class="field"><label for="email">EMAIL ADDRESS <span>Required</span></label><input class="input" id="email" name="email" type="email" required maxlength="120" placeholder="Enter your email address"><div class="hint">We'll use this to contact you about your request.</div></div>
+<div class="field"><label for="name">MINECRAFT USERNAME <span>Required</span></label><input class="input" id="name" name="username" required maxlength="32" placeholder="Enter your Minecraft username"></div>
+<div class="field"><label for="category">WHAT CAN WE HELP YOU WITH? <span>Required</span></label><div class="select-wrap"><select id="category" name="category" required><option value="">Please select...</option><option>In-game Issue</option><option>Purchase / Store</option><option>Report a Player</option><option>Bug Report</option><option>Appeal</option><option>Other</option></select></div></div>
+<div class="field"><label for="subject">SUBJECT <span>Required</span></label><input class="input" id="subject" name="subject" required maxlength="120" placeholder="Briefly describe your issue"></div>
+<div class="field"><label for="message">DESCRIPTION <span>Required</span></label><textarea id="message" name="message" required maxlength="5000" placeholder="Please provide as much detail as possible. Include what happened, when it happened, and any relevant error messages."></textarea><div class="hint"><span id="count">0</span>/5000 characters</div></div>
+<div class="privacy">🔒 <span>For your security, never include your password or other private account credentials.</span></div>
+<div class="submit-row"><button class="btn primary" id="submitBtn" type="submit">SUBMIT REQUEST</button></div><div id="success" class="success">✓ Your request has been submitted. Your ticket is now in our support queue.</div></form></section>
+</div></div></main>
+<footer>© 2026 explicitSky. Not affiliated with Mojang Studios or Microsoft.</footer>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+/* Replace these with your Firebase Web App configuration. */
+const firebaseConfig = {
+    apiKey: "AIzaSyAMlZXiyRcJ1PWg-3nBfqhtamwqIDI9Eyo",
+    authDomain: "explicitskyserver.firebaseapp.com",
+    projectId: "explicitskyserver",
+    storageBucket: "explicitskyserver.firebasestorage.app",
+    messagingSenderId: "114617019545",
+    appId: "1:114617019545:web:8fc27a10458274318c1c08"
+};
+
+const form = document.getElementById("supportForm");
+const success = document.getElementById("success");
+const button = document.getElementById("submitBtn");
+const message = document.getElementById("message");
+const count = document.getElementById("count");
+
+if (!form || !button || !message || !count || !success) {
+  console.error("Support form elements are missing.");
+  throw new Error("Support form could not be initialized.");
+}
+
+message.addEventListener("input", () => {
+  count.textContent = message.value.length;
+});
+
+let db = null;
+
+try {
+  if (
+    firebaseConfig.apiKey &&
+    firebaseConfig.apiKey !== "YOUR_API_KEY" &&
+    firebaseConfig.projectId &&
+    firebaseConfig.projectId !== "YOUR_PROJECT_ID"
+  ) {
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+  }
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  success.classList.remove("show");
+
+  if (!db) {
+    success.textContent =
+      "Firebase is not configured yet. Add your Firebase Web App config in this file.";
+    success.classList.add("show");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "SUBMITTING...";
+
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  try {
+    await addDoc(collection(db, "supportTickets"), {
+      email: data.email,
+      username: data.username,
+      category: data.category,
+      subject: data.subject,
+      message: data.message,
+      status: "open",
+      createdAt: serverTimestamp()
+    });
+
+    form.reset();
+    count.textContent = "0";
+
+    success.textContent =
+      "✓ Your request has been submitted. Your ticket is now in our support queue.";
+    success.classList.add("show");
+  } catch (error) {
+    console.error("Ticket submission error:", error);
+
+    success.textContent =
+      "Could not submit the ticket. Please try again.";
+    success.classList.add("show");
+  } finally {
+    button.disabled = false;
+    button.textContent = "SUBMIT REQUEST";
+  }
+});
+</script>
+</body>
+</html>

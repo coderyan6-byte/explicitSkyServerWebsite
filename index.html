@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="Banner.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="explicitSky — a premium Minecraft SkyBlock experience. Build, expand, conquer.">
+    <title>explicitSky — Minecraft SkyBlock</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Russo+One&display=swap');
+
+        :root {
+            --bg: #07090f;
+            --panel: #0d111a;
+            --panel2: #111722;
+            --text: #f7f7fb;
+            --muted: #9da4b3;
+            --purple: #793cff;
+            --purple2: #9a68ff;
+            --line: rgba(255,255,255,.09)
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: Inter,Arial,sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden
+        }
+
+            body:before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background: radial-gradient(circle at 75% 25%,rgba(121,60,255,.12),transparent 32%),radial-gradient(circle at 20% 75%,rgba(45,102,255,.07),transparent 30%);
+                z-index: -1
+            }
+
+        a {
+            text-decoration: none;
+            color: inherit
+        }
+
+        button {
+            font: inherit
+        }
+
+        .container {
+            width: min(1180px,calc(100% - 40px));
+            margin: auto
+        }
+
+        nav {
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            background: linear-gradient(#07090fee,transparent)
+        }
+
+        .logo {
+            font-family: Russo One,sans-serif;
+            font-size: 24px;
+            letter-spacing: -1px
+        }
+
+            .logo span {
+                color: var(--purple2)
+            }
+
+        .links {
+            display: flex;
+            gap: 34px;
+            font-size: 12px;
+            font-weight: 800
+        }
+
+            .links a {
+                opacity: .88;
+                position: relative
+            }
+
+                .links a.active:after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    height: 2px;
+                    bottom: -12px;
+                    background: var(--purple2)
+                }
+
+                .links a:hover:after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    height: 2px;
+                    bottom: -12px;
+                    background: var(--purple2)
+                }
+
+                .links a:hover {
+                    opacity: 1
+                }
+
+        .btn {
+            border: 0;
+            border-radius: 5px;
+            padding: 14px 23px;
+            font-size: 12px;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            transition: .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px
+        }
+
+            .btn.primary {
+                background: linear-gradient(135deg,#6c2eff,#8b4fff);
+                box-shadow: 0 8px 28px rgba(121,60,255,.3)
+            }
+
+                .btn.primary:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 35px rgba(121,60,255,.45)
+                }
+
+            .btn.ghost {
+                background: #090d14;
+                border: 1px solid #303744
+            }
+
+                .btn.ghost:hover {
+                    background: #121824
+                }
+
+        .hero {
+            min-height: 720px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding-top: 50px;
+            overflow: hidden
+        }
+
+        .hero-art {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(90deg,#07090f 0%,rgba(7,9,15,.91) 29%,rgba(7,9,15,.25) 62%,rgba(7,9,15,.35) 100%),linear-gradient(0deg,#07090f 0%,transparent 23%,rgba(7,9,15,.25) 100%),url("hero.png");
+            background-size: cover;
+            background-position: center;
+            opacity: .95
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 2
+        }
+
+        .kicker, .eyebrow {
+            color: #a069ff;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: .4px;
+            text-transform: uppercase
+        }
+
+        .hero h1 {
+            font-family: Russo One,sans-serif;
+            font-size: 78px;
+            line-height: .93;
+            letter-spacing: 2px;
+            max-width: 610px;
+            margin: 12px 0 20px
+        }
+
+            .hero h1 span {
+                display: block;
+                color: #873eff
+            }
+
+        .hero p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #c8ccd5;
+            max-width: 540px
+        }
+
+            .hero p b {
+                color: #a46bff
+            }
+
+        .actions {
+            display: flex;
+            gap: 14px;
+            margin-top: 28px
+        }
+
+        .ip-label {
+            margin-top: 31px;
+            color: #9f63ff;
+            font-weight: 800;
+            font-size: 12px
+        }
+
+        .ip {
+            display: flex;
+            margin-top: 9px;
+            width: 345px
+        }
+
+            .ip input {
+                min-width: 0;
+                flex: 1;
+                background: #080b11;
+                border: 1px solid #303641;
+                border-radius: 5px 0 0 5px;
+                color: white;
+                padding: 12px 14px;
+                font: 700 14px monospace;
+                outline: 0
+            }
+
+        .copy {
+            width: 48px;
+            border: 0;
+            border-radius: 0 5px 5px 0;
+            background: #7133f4;
+            color: white;
+            cursor: pointer
+        }
+
+        section {
+            padding: 22px 0
+        }
+
+        .panel {
+            background: linear-gradient(145deg,rgba(18,23,33,.96),rgba(9,12,18,.98));
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            overflow: hidden
+        }
+
+        .features {
+            text-align: center;
+            padding: 25px 26px 28px
+        }
+
+            .features h2, .journey h2 {
+                font-family: Russo One,sans-serif;
+                font-size: 28px;
+                margin: 10px 0 8px
+            }
+
+        .sub {
+            color: #aeb4c0;
+            font-size: 13px;
+            line-height: 1.6
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(5,1fr);
+            gap: 16px;
+            margin-top: 22px
+        }
+
+        .card {
+            padding: 20px 14px;
+            border: 1px solid #303640;
+            background: linear-gradient(#161b24,#10151d);
+            border-radius: 7px;
+            min-height: 174px
+        }
+
+        .icon {
+            font-size: 38px;
+            height: 56px;
+            display: flex;
+            justify-content: center;
+            align-items: center
+        }
+
+        .card h3 {
+            font-family: Russo One,sans-serif;
+            font-size: 13px;
+            margin: 11px 0
+        }
+
+        .card p {
+            font-size: 12px;
+            line-height: 1.55;
+            color: #aeb4c0
+        }
+
+        .journey {
+            display: grid;
+            grid-template-columns: 1.2fr .9fr;
+            min-height: 370px
+        }
+
+        .journey-img {
+            background-image: linear-gradient(90deg,rgba(7,10,15,.05),#10151de8),url("Journey.png");
+            background-size: cover;
+            background-position: left bottom;
+            min-height: 370px
+        }
+
+        .journey-copy {
+            padding: 54px 46px
+        }
+
+        .check {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin: 14px 0;
+            color: #d9dce4;
+            font-size: 13px
+        }
+
+            .check i {
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                display: grid;
+                place-items: center;
+                background: #7040d9;
+                font-style: normal;
+                font-size: 11px
+            }
+
+        .smallip {
+            font-size: 10px;
+            font-weight: 800;
+            color: #aeb4c0;
+            margin-top: 14px
+        }
+
+        .discord {
+            display: grid;
+            grid-template-columns: 1.3fr 2fr;
+            align-items: center;
+            padding: 25px 40px;
+            gap: 30px
+        }
+
+        .discord-left {
+            display: flex;
+            gap: 18px;
+            align-items: center
+        }
+
+        .discord-icon {
+            font-size: 52px
+        }
+
+        .discord h3 {
+            font-family: Russo One,sans-serif;
+            font-size: 18px
+        }
+
+        .discord p {
+            font-size: 12px;
+            color: #aeb4c0;
+            margin: 6px 0 12px
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            text-align: center
+        }
+
+        .stat {
+            border-left: 1px solid var(--line)
+        }
+
+            .stat strong {
+                display: block;
+                font-family: Russo One,sans-serif;
+                font-size: 26px
+            }
+
+            .stat span {
+                font-size: 10px;
+                color: #aeb4c0
+            }
+
+        footer {
+            padding: 40px 0;
+            color: #6f7684;
+            font-size: 11px;
+            text-align: center
+        }
+
+        .toast {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            background: #171d28;
+            border: 1px solid #333b49;
+            padding: 12px 17px;
+            border-radius: 7px;
+            font-size: 12px;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: .25s;
+            z-index: 20
+        }
+
+            .toast.show {
+                opacity: 1;
+                transform: none
+            }
+
+        @media(max-width:850px) {
+            .links {
+                display: none
+            }
+
+            .hero {
+                min-height: 760px
+            }
+
+                .hero h1 {
+                    font-size: 58px
+                }
+
+            .cards {
+                grid-template-columns: repeat(2,1fr)
+            }
+
+            .journey {
+                grid-template-columns: 1fr
+            }
+
+            .journey-img {
+                min-height: 250px
+            }
+
+            .discord {
+                grid-template-columns: 1fr;
+                padding: 25px
+            }
+
+            .stats {
+                margin-top: 20px
+            }
+
+            .stat:first-child {
+                border-left: 0
+            }
+        }
+
+        @media(max-width:500px) {
+            .container {
+                width: min(100% - 24px,1180px)
+            }
+
+            .hero {
+                min-height: 720px
+            }
+
+                .hero h1 {
+                    font-size: 44px
+                }
+
+                .hero p {
+                    font-size: 14px
+                }
+
+            .ip {
+                width: 100%
+            }
+
+            .actions {
+                flex-wrap: wrap
+            }
+
+            .cards {
+                grid-template-columns: 1fr
+            }
+
+            .journey-copy {
+                padding: 35px 25px
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr 1fr
+            }
+
+            .stat strong {
+                font-size: 19px
+            }
+        }
+    </style>
+</head>
+<body>
+<nav><div class="container" style="display:flex;align-items:center;justify-content:space-between"><a class="logo" href="#">explicit<span>Sky</span></a><div class="links"><a class="active" href="index">HOME</a><a href="STAFF">STAFF</a><a href="store">STORE</a><a href="#vote">VOTE</a><a href="#discord">DISCORD</a><a href="Support">SUPPORT</a></div><a class="btn primary" href="#join">PLAY NOW ↗</a></div></nav>
+
+<main id="home">
+<section class="hero"><div class="hero-art"></div><div class="container">
+<div class="kicker">THE ULTIMATE</div>
+<h1>SKYBLOCK<span>EXPERIENCE</span></h1>
+<p>Build. Expand. Conquer. Join thousands of players on <b>explicitSky</b></p>
+<div class="actions"><a class="btn primary" href="#join">▶ &nbsp; PLAY NOW</a><a class="btn ghost" href="#features">VIEW FEATURES</a></div>
+<div class="ip-label">SERVER IP</div><div class="ip"><input id="ip" value="explicitSky.minehut.gg" readonly><button class="copy" onclick="copyIP()">▣</button></div>
+</div></section>
+
+<section id="features"><div class="container panel features"><div class="eyebrow">WHY EXPLICITSKY?</div><h2>BUILT FOR PLAYERS</h2><p class="sub">We've created a SkyBlock server that's fun, fair, and packed<br>with features you'll love.</p>
+<div class="cards">
+<div class="card"><div class="icon">📦</div><h3>CUSTOM ISLANDS</h3><p>Create, expand, and customize your island your way.</p></div>
+<div class="card"><div class="icon">💎</div><h3>ECONOMY</h3><p>A balanced economy with shops, auctions, and real value.</p></div>
+<div class="card"><div class="icon">🛡️</div><h3>COMMUNITY</h3><p>An active, friendly community and staff that care.</p></div>
+</div></div></section>
+
+<section id="islands"><div class="container panel journey"><div class="journey-img"></div><div class="journey-copy"><div class="eyebrow">Create YOUR OWN SKYBLOCK</div><h2>YOUR SKYBLOCK<br>JOURNEY STARTS HERE</h2>
+<div class="check"><i>✓</i> No pay-to-win</div><div class="check"><i>✓</i> Active updates & new content</div><div class="check"><i>✓</i> Friendly & helpful community</div><div class="check"><i>✓</i> Works on Java Edition 1.18-2 – 26.2+</div>
+<div id="join" style="margin-top:22px"><a class="btn primary" href="minecraft://?addExternalServer=explicitSky|explicitSky.minhut.gg:25575">explicitSky.minhut.gg ↗</a><div class="smallip">SERVER IP: explicitSky.minhut.gg</div></div>
+</div></div></section>
+
+<section id="discord"><div class="container panel discord"><div class="discord-left"><div class="discord-icon">◉</div><div><h3>JOIN OUR DISCORD</h3><p>Stay up to date, chat with the community,<br>and never miss an update!</p><a class="btn primary" href="#" onclick="return discord()">JOIN DISCORD ↗</a></div></div>
+<div class="stats"><div class="stat"><strong>2-10</strong><span>PLAYERS</span></div><div class="stat"><strong>2</strong><span>ISLANDS</span></div><div class="stat"><strong>24/7</strong><span>UPTIME</span></div></div></div></section>
+</main>
+<footer>© 2026 explicitSky. Not affiliated with Mojang Studios or Microsoft.</footer>
+<div class="toast" id="toast">Server IP copied!</div>
+<script>
+function copyIP(){navigator.clipboard.writeText(document.getElementById('ip').value).then(()=>{let t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}).catch(()=>alert('Server IP: play.explicitsky.com'))}
+function discord(){alert('Replace this button URL with your explicitSky Discord invite.');return false}
+</script>
+</body>
+</html>

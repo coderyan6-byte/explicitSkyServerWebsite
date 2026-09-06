@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>explicitSky — Site Console</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:"MS Sans Serif",Tahoma,Arial,sans-serif;font-size:13px}
+body{background:#008080;color:#000}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+/* Windows 98 chrome */
+.window{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;box-shadow:1px 1px 0 #000}
+.titlebar{height:25px;background:#000080;color:#fff;padding:3px 5px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.titlebar .caption{display:flex;gap:7px;align-items:center;white-space:nowrap}
+.winicon{width:16px;height:16px;background:#c0c0c0;border:1px solid #000;display:inline-grid;place-items:center;color:#000;font-size:10px;font-weight:900}
+.winbuttons{display:flex;gap:2px}
+.winbuttons button{width:19px;height:18px;padding:0;line-height:14px;background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;font-weight:900;font-size:11px}
+.winbuttons button:active,.btn:active{border-color:#404040 #fff #fff #404040}
+.content{padding:10px}
+.inset{border:2px solid;border-color:#404040 #fff #fff #404040;background:#fff}
+.btn{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;padding:4px 12px;min-height:25px}
+.btn.primary{font-weight:700}
+.btn.danger{color:#800000}
+.btn:disabled{color:#808080;cursor:not-allowed}
+label{display:block;font-weight:700;margin-bottom:4px}
+input,textarea,select{background:#fff;border:2px solid;border-color:#404040 #fff #fff #404040;padding:4px}
+input:focus,textarea:focus,select:focus{outline:1px dotted #000}
+textarea{resize:vertical}
+.field{margin-bottom:10px}
+.small{font-size:11px}
+.muted{color:#555}
+.statusbar{display:flex;gap:4px;margin-top:6px}
+.statusbar>div{background:#c0c0c0;border:1px solid #808080;border-top-color:#404040;border-left-color:#404040;padding:3px 6px;min-height:21px}
+
+/* Login */
+#loginScreen{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login-window{width:min(430px,100%)}
+.login-body{padding:18px}
+.login-logo{font-family:"Courier New",monospace;font-size:25px;font-weight:900;margin-bottom:5px}
+.login-logo span{color:#000080}
+.login-note{margin:0 0 18px}
+.login-form{display:grid;grid-template-columns:115px 1fr;gap:10px;align-items:center}
+.login-form label{margin:0}
+.login-actions{grid-column:2;display:flex;gap:8px;margin-top:5px}
+.login-error{grid-column:1/-1;color:#800000;min-height:16px}
+.login-hint{margin-top:14px;border-top:1px solid #808080;padding-top:10px}
+
+/* Console */
+#consoleScreen{padding:10px;min-height:100vh}
+.main-window{width:min(1280px,100%);margin:0 auto;min-height:calc(100vh - 20px)}
+.menu{height:27px;display:flex;align-items:center;gap:20px;padding:0 8px;background:#c0c0c0;border-bottom:1px solid #808080}
+.menu span{cursor:pointer}
+.menu span:first-letter{text-decoration:underline}
+.toolbar{padding:7px;display:flex;gap:6px;border-bottom:1px solid #808080;flex-wrap:wrap}
+.layout{display:grid;grid-template-columns:180px 1fr;min-height:calc(100vh - 125px)}
+.sidebar{padding:7px;background:#c0c0c0;border-right:1px solid #808080}
+.navbtn{display:block;width:100%;text-align:left;margin-bottom:4px;background:#c0c0c0;border:0;padding:7px 8px}
+.navbtn.active{border:2px solid;border-color:#404040 #fff #fff #404040;background:#a0a0a0;font-weight:700}
+.navbtn:hover{background:#d4d4d4}
+.userbox{margin-top:15px;padding:7px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #808080;border-bottom:1px solid #808080}
+.userbox b{display:block;margin-bottom:3px}
+.workarea{padding:10px;min-width:0}
+.view{display:none}
+.view.active{display:block}
+.section-title{font-size:17px;font-weight:700;margin:0 0 10px}
+.panel{padding:10px;margin-bottom:10px}
+.panel-title{font-weight:700;margin:-10px -10px 10px;padding:4px 6px;background:#d4d4d4;border-bottom:1px solid #808080}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.stat{padding:9px;background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:11px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{border:1px solid #808080;padding:5px;text-align:left;vertical-align:top}
+th{background:#d4d4d4}
+.table-wrap{overflow:auto}
+.ticket-status{font-weight:700}
+.status-open{color:#000080}.status-solved{color:#006400}.status-rejected{color:#800000}
+.ticket-message{white-space:pre-wrap;max-width:430px}
+.actions{display:flex;gap:5px;flex-wrap:wrap}
+.log-table td{font-size:11px}
+.banner-preview{padding:8px;background:#ffffe1;border:1px solid #808000;margin-bottom:10px}
+.banner-preview strong{display:block;margin-bottom:3px}
+.empty{padding:20px;text-align:center;color:#555}
+.notice{padding:8px;border:1px solid #808000;background:#ffffe1;margin-bottom:10px}
+.form-actions{display:flex;gap:7px;margin-top:10px}
+hr{border:0;border-top:1px solid #808080;border-bottom:1px solid #fff;margin:12px 0}
+
+@media(max-width:750px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{border-right:0;border-bottom:1px solid #808080}
+  .navbtn{display:inline-block;width:auto;margin-right:4px}
+  .userbox{display:none}
+  .grid2,.stat-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .login-form{grid-template-columns:1fr}
+  .login-actions{grid-column:1}
+  .grid2,.stat-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<section id="loginScreen">
+  <div class="window login-window">
+    <div class="titlebar">
+      <div class="caption"><span class="winicon">eS</span> explicitSky — Console Login</div>
+      <div class="winbuttons"><button type="button" aria-label="Close" onclick="location.href='index.html'">×</button></div>
+    </div>
+    <div class="login-body">
+      <div class="login-logo">explicit<span>Sky</span> Console</div>
+      <p class="login-note">Authorized site administration only.</p>
+      <form id="loginForm" class="login-form">
+        <label for="loginUsername">Username:</label>
+        <input id="loginUsername" name="username" autocomplete="username" required maxlength="32">
+        <label for="loginPassword">Password:</label>
+        <input id="loginPassword" name="password" type="password" autocomplete="current-password" required maxlength="128">
+        <div id="loginError" class="login-error"></div>
+        <div class="login-actions">
+          <button class="btn primary" type="submit">Log In</button>
+          <button class="btn" type="button" onclick="location.href='index.html'">Cancel</button>
+        </div>
+      </form>
+      <div class="login-hint small">
+        Accounts are stored in the <b>consoles database</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="consoleScreen" class="hidden">
+  <div class="window main-window">
+    <div class="titlebar">
+      <div class="caption"><span class="winicon">eS</span> explicitSky Site Console</div>
+      <div class="winbuttons">
+        <button type="button" title="Minimize" onclick="alert('Minimize is not available in the web console.')">_</button>
+        <button type="button" title="Close" onclick="logout()">×</button>
+      </div>
+    </div>
+
+    <div class="menu">
+      <span onclick="showView('dashboard')">Console</span>
+      <span onclick="showView('tickets')">Tickets</span>
+      <span onclick="showView('accounts')">Accounts</span>
+      <span onclick="showView('banner')">Site</span>
+      <span onclick="showView('logs')">Logs</span>
+      <span onclick="showView('settings')">Settings</span>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn" onclick="showView('dashboard')">Dashboard</button>
+      <button class="btn" onclick="showView('tickets')">Support Tickets</button>
+      <button class="btn" onclick="showView('accounts')">Account Manager</button>
+      <button class="btn" onclick="showView('banner')">Site Banner</button>
+      <button class="btn" onclick="showView('logs')">Activity Log</button>
+      <button class="btn" onclick="showView('settings')">Settings</button>
+      <button class="btn" onclick="logout()">Log Out</button>
+    </div>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <button class="navbtn active" data-view="dashboard" onclick="showView('dashboard')">▣ Dashboard</button>
+        <button class="navbtn" data-view="tickets" onclick="showView('tickets')">▤ Support Tickets</button>
+        <button class="navbtn" data-view="accounts" onclick="showView('accounts')">♙ Accounts</button>
+        <button class="navbtn" data-view="banner" onclick="showView('banner')">▤ Site Banner</button>
+        <button class="navbtn" data-view="logs" onclick="showView('logs')">▥ Activity Logs</button>
+        <button class="navbtn" data-view="settings" onclick="showView('settings')">⚙ Settings</button>
+        <div class="userbox">
+          <b id="currentUser">Not logged in</b>
+          <span id="currentRole" class="small">—</span>
+        </div>
+      </aside>
+
+      <main class="workarea">
+
+        <section id="view-dashboard" class="view active">
+          <h1 class="section-title">Site Console</h1>
+          <div class="stat-grid">
+            <div class="stat"><b id="statTickets">—</b><span>Total tickets</span></div>
+            <div class="stat"><b id="statOpen">—</b><span>Open tickets</span></div>
+            <div class="stat"><b id="statAccounts">—</b><span>Accounts</span></div>
+            <div class="stat"><b id="statLogs">—</b><span>Logged actions</span></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">System Status</div>
+            <div id="dashboardStatus">Loading...</div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">Current Banner</div>
+            <div id="dashboardBanner">Loading...</div>
+          </div>
+        </section>
+
+        <section id="view-tickets" class="view">
+          <h1 class="section-title">Support Tickets</h1>
+          <div class="panel">
+            <div class="panel-title">Ticket Queue</div>
+            <div class="actions" style="margin-bottom:8px">
+              <button class="btn" onclick="loadTickets()">Refresh</button>
+              <select id="ticketFilter" onchange="renderTickets()">
+                <option value="all">All tickets</option>
+                <option value="open">Open</option>
+                <option value="solved">Solved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Subject</th><th>Player / Email</th><th>Category</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="ticketRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-accounts" class="view">
+          <h1 class="section-title">Account Manager</h1>
+          <div class="grid2">
+            <div class="panel">
+              <div class="panel-title">Create Account</div>
+              <form id="createAccountForm">
+                <div class="field"><label for="newUsername">Username</label><input id="newUsername" maxlength="32" required></div>
+                <div class="field"><label for="newPassword">Password</label><input id="newPassword" type="password" maxlength="128" required></div>
+                <div class="field"><label for="newPasswordConfirm">Confirm password</label><input id="newPasswordConfirm" type="password" maxlength="128" required></div>
+                <div class="field"><label for="newRole">Role</label>
+                  <select id="newRole"><option value="admin">Admin</option><option value="staff">Staff</option></select>
+                </div>
+                <div id="accountCreateMessage" class="small"></div>
+                <div class="form-actions"><button class="btn primary" type="submit">Create Account</button></div>
+              </form>
+            </div>
+            <div class="panel">
+              <div class="panel-title">Existing Accounts</div>
+              <div class="table-wrap">
+                <table><thead><tr><th>Username</th><th>Role</th><th>Created</th></tr></thead><tbody id="accountRows"></tbody></table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-banner" class="view">
+          <h1 class="section-title">Site Banner</h1>
+          <div class="notice">The banner is saved in Firestore and can be removed later without deleting its configuration.</div>
+          <div class="panel">
+            <div class="panel-title">Current Banner</div>
+            <div id="bannerCurrent">Loading...</div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">Set / Replace Banner</div>
+            <form id="bannerForm">
+              <div class="field"><label for="bannerText">Banner text</label><textarea id="bannerText" rows="4" maxlength="500" placeholder="Example: Scheduled maintenance tonight at 8 PM EST."></textarea></div>
+              <div id="bannerMessage" class="small"></div>
+              <div class="form-actions"><button class="btn primary" type="submit">Set Banner</button><button class="btn danger" type="button" onclick="removeBanner()">Remove Banner</button></div>
+            </form>
+          </div>
+        </section>
+
+        <section id="view-logs" class="view">
+          <h1 class="section-title">Activity Logs</h1>
+          <div class="panel">
+            <div class="panel-title">Every console action is recorded</div>
+            <div class="actions" style="margin-bottom:8px"><button class="btn" onclick="loadLogs()">Refresh</button></div>
+            <div class="table-wrap">
+              <table class="log-table"><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead><tbody id="logRows"></tbody></table>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-settings" class="view">
+          <h1 class="section-title">Settings</h1>
+          <div class="panel">
+            <div class="panel-title">Change Password</div>
+            <form id="passwordForm" style="max-width:520px">
+              <div class="field"><label for="currentPassword">Current password</label><input id="currentPassword" type="password" required maxlength="128"></div>
+              <div class="field"><label for="changePassword">New password</label><input id="changePassword" type="password" required maxlength="128"></div>
+              <div class="field"><label for="changePasswordConfirm">Confirm new password</label><input id="changePasswordConfirm" type="password" required maxlength="128"></div>
+              <div id="passwordMessage" class="small"></div>
+              <div class="form-actions"><button class="btn primary" type="submit">Change Password</button></div>
+            </form>
+          </div>
+          <div class="panel">
+            <div class="panel-title">Session</div>
+            <p>Signed in as <b id="settingsUsername">—</b>.</p>
+            <div class="form-actions"><button class="btn" onclick="logout()">Log Out</button></div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <div class="statusbar">
+      <div id="statusConnection">Firestore: connecting...</div>
+      <div id="statusMessage">Ready.</div>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, getDocs, getDoc, doc, query, where,
+  updateDoc, serverTimestamp, orderBy, limit
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+/*
+  IMPORTANT:
+  Use the SAME Firebase Web App configuration as your support form.
+*/
+const firebaseConfig = {
+    apiKey: "AIzaSyAMlZXiyRcJ1PWg-3nBfqhtamwqIDI9Eyo",
+    authDomain: "explicitskyserver.firebaseapp.com",
+    projectId: "explicitskyserver",
+    storageBucket: "explicitskyserver.firebasestorage.app",
+    messagingSenderId: "114617019545",
+    appId: "1:114617019545:web:8fc27a10458274318c1c08"
+};
+
+let db = null;
+let session = null;
+let tickets = [];
+let accounts = [];
+let logs = [];
+
+const $ = id => document.getElementById(id);
+
+function setStatus(text) {
+  $("statusMessage").textContent = text;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[char]));
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  try {
+    const d = value.toDate ? value.toDate() : new Date(value);
+    return isNaN(d) ? "—" : d.toLocaleString();
+  } catch { return "—"; }
+}
+
+async function logAction(action, details = {}) {
+  if (!db) return;
+
+  try {
+    await addDoc(collection(db, "AdminLogs"), {
+      action,
+      username: session?.username || "SYSTEM",
+      details,
+      createdAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error("Could not write audit log:", error);
+  }
+}
+
+function showConsole() {
+  $("loginScreen").classList.add("hidden");
+  $("consoleScreen").classList.remove("hidden");
+  $("currentUser").textContent = session.username;
+  $("currentRole").textContent = session.role || "admin";
+  $("settingsUsername").textContent = session.username;
+}
+
+function showView(name) {
+  if (!session) return;
+
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".navbtn").forEach(v => v.classList.remove("active"));
+
+  const view = $("view-" + name);
+  const nav = document.querySelector(`.navbtn[data-view="${name}"]`);
+
+  if (view) view.classList.add("active");
+  if (nav) nav.classList.add("active");
+
+  logAction("VIEW_OPENED", { view: name });
+
+  if (name === "dashboard") loadDashboard();
+  if (name === "tickets") loadTickets();
+  if (name === "accounts") loadAccounts();
+  if (name === "banner") loadBanner();
+  if (name === "logs") loadLogs();
+}
+
+async function login(username, password) {
+  const q = query(
+    collection(db, "Accounts"),
+    where("Username", "==", username),
+    limit(1)
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    await logFailedLogin(username, "ACCOUNT_NOT_FOUND");
+    throw new Error("Invalid username or password.");
+  }
+
+  const accountDoc = snapshot.docs[0];
+  const account = accountDoc.data();
+
+  if (String(account.Password || "") !== password) {
+    await logFailedLogin(username, "INVALID_PASSWORD");
+    throw new Error("Invalid username or password.");
+  }
+
+  const role = String(account.Role || "admin").toLowerCase();
+
+  if (role !== "admin" && role !== "staff") {
+    await logFailedLogin(username, "UNAUTHORIZED_ROLE");
+    throw new Error("This account is not authorized to use the console.");
+  }
+
+  session = {
+    docId: accountDoc.id,
+    username: account.Username,
+    role
+  };
+
+  await logAction("LOGIN_SUCCESS", { role });
+  showConsole();
+  $("statusConnection").textContent = "Firestore: connected";
+  setStatus("Logged in.");
+  await loadDashboard();
+}
+
+async function logFailedLogin(username, reason) {
+  if (!db) return;
+  try {
+    await addDoc(collection(db, "AdminLogs"), {
+      action: "LOGIN_FAILED",
+      username: username || "UNKNOWN",
+      details: { reason },
+      createdAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function logout() {
+  if (session) await logAction("LOGOUT", {});
+  session = null;
+  $("consoleScreen").classList.add("hidden");
+  $("loginScreen").classList.remove("hidden");
+  $("loginForm").reset();
+  $("loginError").textContent = "";
+}
+
+async function loadDashboard() {
+  try {
+    const [ticketSnap, accountSnap, logSnap] = await Promise.all([
+      getDocs(collection(db, "supportTickets")),
+      getDocs(collection(db, "Accounts")),
+      getDocs(collection(db, "AdminLogs"))
+    ]);
+
+    const ticketList = ticketSnap.docs.map(d => d.data());
+    const open = ticketList.filter(t => (t.status || "open") === "open").length;
+
+    $("statTickets").textContent = ticketList.length;
+    $("statOpen").textContent = open;
+    $("statAccounts").textContent = accountSnap.size;
+    $("statLogs").textContent = logSnap.size;
+
+    $("dashboardStatus").innerHTML =
+      `<b>OK</b> — Console connected to Firebase Firestore.`;
+
+    await loadBanner(false);
+  } catch (error) {
+    console.error(error);
+    $("dashboardStatus").textContent = "Could not load dashboard data.";
+    setStatus("Firestore error.");
+  }
+}
+
+async function loadTickets() {
+  try {
+    const snapshot = await getDocs(collection(db, "supportTickets"));
+    tickets = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    tickets.sort((a,b) => {
+      const at = a.createdAt?.toMillis?.() || 0;
+      const bt = b.createdAt?.toMillis?.() || 0;
+      return bt - at;
+    });
+
+    renderTickets();
+    setStatus(`${tickets.length} ticket(s) loaded.`);
+  } catch (error) {
+    console.error(error);
+    $("ticketRows").innerHTML =
+      `<tr><td colspan="6" class="empty">Could not load tickets.</td></tr>`;
+  }
+}
+
+function renderTickets() {
+  const filter = $("ticketFilter").value;
+  const filtered = tickets.filter(t => filter === "all" || (t.status || "open") === filter);
+
+  if (!filtered.length) {
+    $("ticketRows").innerHTML =
+      `<tr><td colspan="6" class="empty">No tickets found.</td></tr>`;
+    return;
+  }
+
+  $("ticketRows").innerHTML = filtered.map(t => {
+    const status = String(t.status || "open").toLowerCase();
+
+    return `<tr>
+      <td><b>${escapeHtml(t.subject)}</b><br><span class="small muted">${escapeHtml(formatDate(t.createdAt))}</span></td>
+      <td>${escapeHtml(t.username)}<br><span class="small">${escapeHtml(t.email)}</span></td>
+      <td>${escapeHtml(t.category)}</td>
+      <td class="ticket-message">${escapeHtml(t.message)}</td>
+      <td class="ticket-status status-${escapeHtml(status)}">${escapeHtml(status.toUpperCase())}</td>
+      <td>
+        <div class="actions">
+          ${status === "open"
+            ? `<button class="btn" onclick="updateTicket('${t.id}','solved')">Mark Solved</button>
+               <button class="btn danger" onclick="updateTicket('${t.id}','rejected')">Reject</button>`
+            : `<span class="small">No destructive action.</span>`}
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+async function updateTicket(id, newStatus) {
+  const ticket = tickets.find(t => t.id === id);
+  if (!ticket) return;
+
+  const verb = newStatus === "solved" ? "mark as solved" : "reject";
+  if (!confirm(`Are you sure you want to ${verb} this ticket?`)) {
+    await logAction("TICKET_ACTION_CANCELLED", { ticketId: id, attemptedStatus: newStatus });
+    return;
+  }
+
+  try {
+    await updateDoc(doc(db, "supportTickets", id), {
+      status: newStatus,
+      resolvedAt: serverTimestamp(),
+      resolvedBy: session.username
+    });
+
+    await logAction("TICKET_STATUS_CHANGED", {
+      ticketId: id,
+      from: ticket.status || "open",
+      to: newStatus,
+      subject: ticket.subject
+    });
+
+    await loadTickets();
+    await loadDashboard();
+    setStatus(`Ticket marked ${newStatus}.`);
+  } catch (error) {
+    console.error(error);
+    setStatus("Could not update ticket.");
+  }
+}
+
+async function loadAccounts() {
+  try {
+    const snapshot = await getDocs(collection(db, "Accounts"));
+
+    accounts = snapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+
+    $("accountRows").innerHTML = accounts.length
+      ? accounts.map(a => `<tr>
+          <td>${escapeHtml(a.Username)}</td>
+          <td>${escapeHtml(a.Role || "admin")}</td>
+          <td>${escapeHtml(formatDate(a.createdAt))}</td>
+        </tr>`).join("")
+      : `<tr><td colspan="3" class="empty">No accounts found.</td></tr>`;
+
+    setStatus(`${accounts.length} account(s) loaded.`);
+  } catch (error) {
+    console.error(error);
+    $("accountRows").innerHTML =
+      `<tr><td colspan="3" class="empty">Could not load accounts.</td></tr>`;
+  }
+}
+
+$("createAccountForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const username = $("newUsername").value.trim();
+  const password = $("newPassword").value;
+  const confirmPassword = $("newPasswordConfirm").value;
+  const role = $("newRole").value;
+  const msg = $("accountCreateMessage");
+
+  msg.textContent = "";
+
+  if (password !== confirmPassword) {
+    msg.textContent = "Passwords do not match.";
+    msg.style.color = "#800000";
+    await logAction("ACCOUNT_CREATE_FAILED", { username, reason: "PASSWORD_MISMATCH" });
+    return;
+  }
+
+  if (password.length < 4) {
+    msg.textContent = "Password must be at least 4 characters.";
+    msg.style.color = "#800000";
+    await logAction("ACCOUNT_CREATE_FAILED", { username, reason: "PASSWORD_TOO_SHORT" });
+    return;
+  }
+
+  try {
+    const existing = await getDocs(
+      query(collection(db, "Accounts"), where("Username", "==", username), limit(1))
+    );
+
+    if (!existing.empty) {
+      msg.textContent = "That username already exists.";
+      msg.style.color = "#800000";
+      await logAction("ACCOUNT_CREATE_FAILED", { username, reason: "USERNAME_EXISTS" });
+      return;
+    }
+
+    await addDoc(collection(db, "Accounts"), {
+      Username: username,
+      Password: password,
+      Role: role,
+      createdAt: serverTimestamp(),
+      createdBy: session.username
+    });
+
+    await logAction("ACCOUNT_CREATED", { username, role });
+
+    $("createAccountForm").reset();
+    msg.textContent = "Account created successfully.";
+    msg.style.color = "#006400";
+
+    await loadAccounts();
+    await loadDashboard();
+  } catch (error) {
+    console.error(error);
+    msg.textContent = "Could not create account.";
+    msg.style.color = "#800000";
+  }
+});
+
+async function loadBanner(writeDashboard = true) {
+  try {
+    const bannerDoc = await getDoc(doc(db, "SiteConfig", "banner"));
+    const data = bannerDoc.exists() ? bannerDoc.data() : null;
+
+    if (data?.enabled && data.text) {
+      const html = `<div class="banner-preview"><strong>ACTIVE</strong>${escapeHtml(data.text)}<div class="small muted">Updated by ${escapeHtml(data.updatedBy || "unknown")} — ${escapeHtml(formatDate(data.updatedAt))}</div></div>`;
+      $("bannerCurrent").innerHTML = html;
+      $("dashboardBanner").innerHTML = html;
+      $("bannerText").value = data.text;
+    } else {
+      $("bannerCurrent").innerHTML = `<div class="empty">No banner is currently active.</div>`;
+      $("dashboardBanner").innerHTML = `<span class="muted">No active site banner.</span>`;
+      if (writeDashboard) $("bannerText").value = "";
+    }
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    $("bannerCurrent").textContent = "Could not load banner.";
+    $("dashboardBanner").textContent = "Could not load banner.";
+  }
+}
+
+$("bannerForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const text = $("bannerText").value.trim();
+  const msg = $("bannerMessage");
+
+  if (!text) {
+    msg.textContent = "Enter banner text first.";
+    msg.style.color = "#800000";
+    await logAction("BANNER_SET_FAILED", { reason: "EMPTY_TEXT" });
+    return;
+  }
+
+  try {
+    await saveBanner(text);
+
+    await logAction("BANNER_SET", { text });
+    msg.textContent = "Banner saved.";
+    msg.style.color = "#006400";
+
+    await loadBanner();
+  } catch (error) {
+    console.error(error);
+    msg.textContent = "Could not save the banner.";
+    msg.style.color = "#800000";
+  }
+});
+
+
+/*
+  SiteConfig/banner should be a document.
+  The helper below uses a fixed document ID when the document already exists.
+*/
+async function saveBanner(text) {
+  const ref = doc(db, "SiteConfig", "banner");
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    await updateDoc(ref, {
+      enabled: true,
+      text,
+      updatedBy: session.username,
+      updatedAt: serverTimestamp()
+    });
+  } else {
+    const { setDoc } = await import("https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js");
+    await setDoc(ref, {
+      enabled: true,
+      text,
+      updatedBy: session.username,
+      updatedAt: serverTimestamp()
+    });
+  }
+}
+
+async function removeBanner() {
+  if (!confirm("Remove the current site banner? It will be disabled, not deleted.")) {
+    await logAction("BANNER_REMOVE_CANCELLED", {});
+    return;
+  }
+
+  try {
+    const ref = doc(db, "SiteConfig", "banner");
+    const snap = await getDoc(ref);
+
+    if (snap.exists()) {
+      await updateDoc(ref, {
+        enabled: false,
+        updatedBy: session.username,
+        updatedAt: serverTimestamp()
+      });
+    } else {
+      const { setDoc } = await import("https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js");
+      await setDoc(ref, {
+        enabled: false,
+        text: "",
+        updatedBy: session.username,
+        updatedAt: serverTimestamp()
+      });
+    }
+
+    await logAction("BANNER_REMOVED", {});
+    $("bannerMessage").textContent = "Banner removed. The configuration was kept.";
+    $("bannerMessage").style.color = "#006400";
+    $("bannerText").value = "";
+
+    await loadBanner();
+    await loadDashboard();
+  } catch (error) {
+    console.error(error);
+    $("bannerMessage").textContent = "Could not remove the banner.";
+    $("bannerMessage").style.color = "#800000";
+  }
+}
+
+$("passwordForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const current = $("currentPassword").value;
+  const next = $("changePassword").value;
+  const confirmNext = $("changePasswordConfirm").value;
+  const msg = $("passwordMessage");
+
+  msg.textContent = "";
+
+  if (next !== confirmNext) {
+    msg.textContent = "New passwords do not match.";
+    msg.style.color = "#800000";
+    await logAction("PASSWORD_CHANGE_FAILED", { reason: "PASSWORD_MISMATCH" });
+    return;
+  }
+
+  if (next.length < 4) {
+    msg.textContent = "New password must be at least 4 characters.";
+    msg.style.color = "#800000";
+    await logAction("PASSWORD_CHANGE_FAILED", { reason: "PASSWORD_TOO_SHORT" });
+    return;
+  }
+
+  try {
+    const accountRef = doc(db, "Accounts", session.docId);
+    const accountSnap = await getDoc(accountRef);
+
+    if (!accountSnap.exists() || String(accountSnap.data().Password || "") !== current) {
+      msg.textContent = "Current password is incorrect.";
+      msg.style.color = "#800000";
+      await logAction("PASSWORD_CHANGE_FAILED", { reason: "CURRENT_PASSWORD_INCORRECT" });
+      return;
+    }
+
+    await updateDoc(accountRef, {
+      Password: next,
+      passwordChangedAt: serverTimestamp(),
+      passwordChangedBy: session.username
+    });
+
+    await logAction("PASSWORD_CHANGED", {});
+    $("passwordForm").reset();
+
+    msg.textContent = "Password changed successfully.";
+    msg.style.color = "#006400";
+  } catch (error) {
+    console.error(error);
+    msg.textContent = "Could not change password.";
+    msg.style.color = "#800000";
+  }
+});
+
+async function loadLogs() {
+  try {
+    const snapshot = await getDocs(
+      query(collection(db, "AdminLogs"), orderBy("createdAt", "desc"), limit(300))
+    );
+
+    logs = snapshot.docs.map(d => d.data());
+
+    $("logRows").innerHTML = logs.length
+      ? logs.map(log => `<tr>
+          <td>${escapeHtml(formatDate(log.createdAt))}</td>
+          <td>${escapeHtml(log.username)}</td>
+          <td><b>${escapeHtml(log.action)}</b></td>
+          <td>${escapeHtml(JSON.stringify(log.details || {}))}</td>
+        </tr>`).join("")
+      : `<tr><td colspan="4" class="empty">No activity logged yet.</td></tr>`;
+
+    $("statLogs").textContent = logs.length;
+    setStatus(`${logs.length} log entr${logs.length === 1 ? "y" : "ies"} loaded.`);
+  } catch (error) {
+    console.error(error);
+    $("logRows").innerHTML =
+      `<tr><td colspan="4" class="empty">Could not load logs. Check Firestore indexes/rules.</td></tr>`;
+  }
+}
+
+$("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const username = $("loginUsername").value.trim();
+  const password = $("loginPassword").value;
+
+  $("loginError").textContent = "";
+
+  if (!db) {
+    $("loginError").textContent = " ";
+    return;
+  }
+
+  try {
+    await login(username, password);
+  } catch (error) {
+    console.error(error);
+    $("loginError").textContent = error.message || "Invalid username or password.";
+  }
+});
+
+/* Initialize Firebase */
+try {
+  if (
+    firebaseConfig.apiKey &&
+    firebaseConfig.apiKey !== "YOUR_API_KEY" &&
+    firebaseConfig.projectId &&
+    firebaseConfig.projectId !== "YOUR_PROJECT_ID"
+  ) {
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    $("statusConnection").textContent = "ready";
+  } else {
+    $("statusConnection").textContent = "NOT CONFIGURED";
+  }
+} catch (error) {
+  console.error(error);
+  $("statusConnection").textContent = "ERROR";
+}
+
+/* Make functions available to inline buttons. */
+window.showView = showView;
+window.updateTicket = updateTicket;
+window.loadTickets = loadTickets;
+window.loadLogs = loadLogs;
+window.removeBanner = removeBanner;
+window.logout = logout;
+window.loadAccounts = loadAccounts;
+</script>
+</body>
+</html>

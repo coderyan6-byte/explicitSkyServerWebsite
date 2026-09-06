@@ -1,0 +1,390 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <script src="Banner.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Meet the explicitSky staff team.">
+    <title>explicitSky — Staff</title>
+
+     
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Russo+One&display=swap');
+
+        :root {
+            --bg: #07090f;
+            --panel: #0d111a;
+            --panel2: #111722;
+            --text: #f7f7fb;
+            --muted: #9da4b3;
+            --purple: #793cff;
+            --purple2: #9a68ff;
+            --line: rgba(255,255,255,.09);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+            body:before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background: radial-gradient(circle at 75% 25%, rgba(121,60,255,.12), transparent 32%), radial-gradient(circle at 20% 75%, rgba(45,102,255,.07), transparent 30%);
+                z-index: -1;
+            }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: min(1180px, calc(100% - 40px));
+            margin: auto;
+        }
+
+        nav {
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(#07090fee, transparent);
+        }
+
+        .logo {
+            font-family: Russo One, sans-serif;
+            font-size: 24px;
+            letter-spacing: -1px;
+        }
+
+            .logo span {
+                color: var(--purple2);
+            }
+
+        .links {
+            display: flex;
+            gap: 34px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+            .links a {
+                opacity: .88;
+                position: relative;
+            }
+
+                .links a.active:after,
+                .links a:hover:after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    height: 2px;
+                    bottom: -12px;
+                    background: var(--purple2);
+                }
+
+                .links a:hover {
+                    opacity: 1;
+                }
+
+        .btn {
+            border: 0;
+            border-radius: 5px;
+            padding: 14px 23px;
+            font-size: 12px;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            transition: .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+            .btn.primary {
+                background: linear-gradient(135deg, #6c2eff, #8b4fff);
+                box-shadow: 0 8px 28px rgba(121,60,255,.3);
+            }
+
+                .btn.primary:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 35px rgba(121,60,255,.45);
+                }
+
+        /* PAGE HEADER */
+
+        .staff-hero {
+            text-align: center;
+            padding: 105px 20px 55px;
+        }
+
+        .eyebrow {
+            color: #a069ff;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+        }
+
+        .staff-hero h1 {
+            font-family: Russo One, sans-serif;
+            font-size: 62px;
+            line-height: 1;
+            letter-spacing: 1px;
+            margin: 12px 0 17px;
+        }
+
+            .staff-hero h1 span {
+                color: #873eff;
+            }
+
+        .staff-hero p {
+            color: #aeb4c0;
+            font-size: 14px;
+            line-height: 1.7;
+            max-width: 550px;
+            margin: auto;
+        }
+
+        /* STAFF CARDS */
+
+        .staff-section {
+            padding: 10px 0 70px;
+        }
+
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .staff-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(18,23,33,.98), rgba(9,12,18,.99));
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            transition: .25s ease;
+        }
+
+            .staff-card:hover {
+                transform: translateY(-5px);
+                border-color: rgba(154,104,255,.45);
+                box-shadow: 0 18px 45px rgba(0,0,0,.35);
+            }
+
+        .staff-image {
+            height: 330px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 35%, rgba(121,60,255,.2), transparent 50%), linear-gradient(180deg, #111722, #0b0e15);
+        }
+
+            .staff-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                transition: .3s ease;
+            }
+
+        .staff-card:hover .staff-image img {
+            transform: scale(1.04);
+        }
+
+        .staff-info {
+            padding: 23px 25px 25px;
+            border-top: 1px solid var(--line);
+        }
+
+        .staff-name {
+            font-family: Russo One, sans-serif;
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .staff-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #a46bff;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        .role-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #8b4fff;
+            box-shadow: 0 0 10px rgba(139,79,255,.7);
+        }
+
+        footer {
+            padding: 40px 0;
+            color: #6f7684;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        @media(max-width: 850px) {
+            .links {
+                display: none;
+            }
+
+            .staff-hero {
+                padding-top: 70px;
+            }
+
+                .staff-hero h1 {
+                    font-size: 50px;
+                }
+
+            .staff-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+        }
+
+        @media(max-width: 500px) {
+            .container {
+                width: min(100% - 24px, 1180px);
+            }
+
+            nav .btn {
+                display: none;
+            }
+
+            .staff-hero {
+                padding: 65px 10px 40px;
+            }
+
+                .staff-hero h1 {
+                    font-size: 40px;
+                }
+
+                .staff-hero p {
+                    font-size: 13px;
+                }
+
+            .staff-image {
+                height: 300px;
+            }
+        }
+    </style>
+     
+
+</head>
+
+<body>
+
+    <nav>
+        <div class="container" style="display:flex;align-items:center;justify-content:space-between">
+            <a class="logo" href="index">explicit<span>Sky</span></a>
+
+             
+            <div class="links">
+                <a href="index">HOME</a>
+                <a class="active" href="STAFF">STAFF</a>
+                <a href="store">STORE</a>
+                <a href="#vote">VOTE</a>
+                <a href="#discord">DISCORD</a>
+                <a href="Support">SUPPORT</a>
+            </div>
+
+            <a class="btn primary" href="index#join">PLAY NOW ↗</a>
+        </div>
+         
+
+    </nav>
+
+    <main>
+
+         
+        <section class="staff-hero">
+            <div class="eyebrow">MEET THE TEAM</div>
+
+            <h1>EXPLICIT<span>SKY STAFF</span></h1>
+
+            <p>
+                Meet the people helping keep explicitSky fun, fair,
+                and welcoming for everyone.
+            </p>
+        </section>
+
+        <section class="staff-section">
+            <div class="container">
+
+                <div class="staff-grid">
+
+                    <!-- STAFF MEMBER ONE -->
+                    <div class="staff-card">
+                        <div class="staff-image">
+                            <img src="StaffOne.png" alt="Staff One">
+                        </div>
+
+                        <div class="staff-info">
+                            <div class="staff-name">Staff One</div>
+
+                            <div class="staff-role">
+                                <span class="role-dot"></span>
+                                Role: Moderator
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STAFF MEMBER TWO -->
+                    <div class="staff-card">
+                        <div class="staff-image">
+                            <img src="StaffTwo.png" alt="Staff Two">
+                        </div>
+
+                        <div class="staff-info">
+                            <div class="staff-name">Staff Two</div>
+
+                            <div class="staff-role">
+                                <span class="role-dot"></span>
+                                In Trial
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+         
+
+    </main>
+
+    <footer>
+        © 2026 explicitSky. Not affiliated with Mojang Studios or Microsoft.
+    </footer>
+
+</body>
+</html>
