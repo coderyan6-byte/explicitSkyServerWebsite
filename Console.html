@@ -502,36 +502,257 @@ async function loadTickets() {
   }
 }
 
-function renderTickets() {
-  const filter = $("ticketFilter").value;
-  const filtered = tickets.filter(t => filter === "all" || (t.status || "open") === filter);
+    function isImageAttachment(attachment) {
+        const type = String(attachment?.contentType || "").toLowerCase();
+        const name = String(attachment?.name || "").toLowerCase();
 
-  if (!filtered.length) {
-    $("ticketRows").innerHTML =
-      `<tr><td colspan="6" class="empty">No tickets found.</td></tr>`;
-    return;
-  }
+        return type.startsWith("image/") ||
+            /\.(png|jpe?g|gif|webp|bmp|svg|avif|apng)$/i.test(name);
+    }
 
-  $("ticketRows").innerHTML = filtered.map(t => {
-    const status = String(t.status || "open").toLowerCase();
+    function getAttachmentBytes(attachment) {
+        const data = attachment?.data;
 
-    return `<tr>
-      <td><b>${escapeHtml(t.subject)}</b><br><span class="small muted">${escapeHtml(formatDate(t.createdAt))}</span></td>
-      <td>${escapeHtml(t.username)}<br><span class="small">${escapeHtml(t.email)}</span></td>
+        if (data && typeof data.toUint8Array === "function") {
+            return data.toUint8Array();
+        }
+
+        if (data instanceof Uint8Array) return data;
+        if (data instanceof ArrayBuffer) return new Uint8Array(data);
+
+        if (ArrayBuffer.isView(data)) {
+            return new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+        }
+
+        return null;
+    }
+
+    let ticketImageObjectUrl = null;
+    let ticketImageEscapeHandler = null;
+
+    function closeTicketImage() {
+        const modal = $("ticketImageModal");
+
+        if (modal) modal.remove();
+
+        if (ticketImageObjectUrl) {
+            URL.revokeObjectURL(ticketImageObjectUrl);
+            ticketImageObjectUrl = null;
+        }
+
+        if (ticketImageEscapeHandler) {
+            document.removeEventListener("keydown", ticketImageEscapeHandler);
+            ticketImageEscapeHandler = null;
+        }
+    }
+
+    function showTicketImage(ticketId, attachmentIndex) {
+        const ticket = tickets.find(t => t.id === ticketId);
+        const attachment = ticket?.attachments?.[attachmentIndex];
+
+        if (!attachment || !isImageAttachment(attachment)) return;
+
+        const bytes = getAttachmentBytes(attachment);
+
+        if (!bytes) {
+            alert("Could not read the attached image.");
+            return;
+        }
+
+        closeTicketImage();
+
+        const extension = String(attachment.name || "").split(".").pop().toLowerCase();
+
+        const mimeTypes = {
+            png: "image/png",
+            jpg: "image/jpeg",
+            jpeg: "image/jpeg",
+            gif: "image/gif",
+            webp: "image/webp",
+            bmp: "image/bmp",
+            svg: "image/svg+xml",
+            avif: "image/avif",
+            apng: "image/apng"
+        };
+
+        const mimeType = String(attachment.contentType || "").startsWith("image/")
+            ? attachment.contentType
+            : (mimeTypes[extension] || "application/octet-stream");
+
+        const blob = new Blob([bytes], { type: mimeType });
+        ticketImageObjectUrl = URL.createObjectURL(blob);
+
+        const modal = document.createElement("div");
+        modal.id = "ticketImageModal";
+        modal.setAttribute("role", "dialog");
+        modal.setAttribute("aria-modal", "true");
+
+        modal.style.cssText = `
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.82);
+  `;
+
+        modal.addEventListener("click", event => {
+            if (event.target === modal) closeTicketImage();
+        });
+
+        const windowBox = document.createElement("div");
+        windowBox.style.cssText = `
+    width:min(1100px,96vw);
+    max-height:94vh;
+    display:flex;
+    flex-direction:column;
+    background:#c0c0c0;
+    border:2px solid;
+    border-color:#fff #404040 #404040 #fff;
+    box-shadow:2px 2px 12px #000;
+  `;
+
+        const titlebar = document.createElement("div");
+        titlebar.style.cssText = `
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:5px 7px;
+    background:#000080;
+    color:white;
+    font-weight:bold;
+  `;
+
+        const title = document.createElement("span");
+        title.textContent = attachment.name || "Attached image";
+
+        const closeButton = document.createElement("button");
+        closeButton.type = "button";
+        closeButton.textContent = "×";
+        closeButton.style.cssText = `
+    width:24px;
+    height:22px;
+    background:#c0c0c0;
+    border:2px solid;
+    border-color:#fff #404040 #404040 #fff;
+    font-weight:bold;
+    cursor:pointer;
+  `;
+
+        closeButton.addEventListener("click", closeTicketImage);
+
+        titlebar.append(title, closeButton);
+
+        const content = document.createElement("div");
+        content.style.cssText = `
+    padding:12px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:auto;
+    background:#222;
+  `;
+
+        const image = document.createElement("img");
+        image.src = ticketImageObjectUrl;
+        image.alt = attachment.name || "Attached image";
+        image.style.cssText = `
+    display:block;
+    max-width:100%;
+    max-height:85vh;
+    object-fit:contain;
+  `;
+
+        content.appendChild(image);
+        windowBox.append(titlebar, content);
+        modal.appendChild(windowBox);
+        document.body.appendChild(modal);
+
+        ticketImageEscapeHandler = event => {
+            if (event.key === "Escape") closeTicketImage();
+        };
+
+        document.addEventListener("keydown", ticketImageEscapeHandler);
+
+        closeButton.focus();
+    }
+
+    function renderTickets() {
+        const filter = $("ticketFilter").value;
+
+        const filtered = tickets.filter(t =>
+            filter === "all" || (t.status || "open") === filter
+        );
+
+        if (!filtered.length) {
+            $("ticketRows").innerHTML =
+                `<tr><td colspan="6" class="empty">No tickets found.</td></tr>`;
+            return;
+        }
+
+        $("ticketRows").innerHTML = filtered.map(t => {
+            const status = String(t.status || "open").toLowerCase();
+
+            const imageButtons = (Array.isArray(t.attachments) ? t.attachments : [])
+                .map((attachment, index) => ({ attachment, index }))
+                .filter(({ attachment }) => isImageAttachment(attachment))
+                .map(({ attachment, index }) => `
+        <button
+          type="button"
+          class="btn"
+          title="${escapeHtml(attachment.name || "Attached image")}"
+          data-ticket-image="true"
+          data-ticket-id="${escapeHtml(t.id)}"
+          data-attachment-index="${index}"
+          style="color:#000080;text-decoration:underline;"
+        >See attached image</button>
+      `).join("");
+
+            return `<tr>
+      <td>
+        <b>${escapeHtml(t.subject)}</b><br>
+        <span class="small muted">${escapeHtml(formatDate(t.createdAt))}</span>
+      </td>
+
+      <td>
+        ${escapeHtml(t.username)}<br>
+        <span class="small">${escapeHtml(t.email)}</span>
+      </td>
+
       <td>${escapeHtml(t.category)}</td>
-      <td class="ticket-message">${escapeHtml(t.message)}</td>
-      <td class="ticket-status status-${escapeHtml(status)}">${escapeHtml(status.toUpperCase())}</td>
+
+      <td class="ticket-message">
+        ${escapeHtml(t.message)}
+      </td>
+
+      <td class="ticket-status status-${escapeHtml(status)}">
+        ${escapeHtml(status.toUpperCase())}
+      </td>
+
       <td>
         <div class="actions">
+          ${imageButtons}
+
           ${status === "open"
-            ? `<button class="btn" onclick="updateTicket('${t.id}','solved')">Mark Solved</button>
+                    ? `<button class="btn" onclick="updateTicket('${t.id}','solved')">Mark Solved</button>
                <button class="btn danger" onclick="updateTicket('${t.id}','rejected')">Reject</button>`
-            : `<span class="small">No destructive action.</span>`}
+                    : `<span class="small">No destructive action.</span>`}
         </div>
       </td>
     </tr>`;
-  }).join("");
-}
+        }).join("");
+
+        $("ticketRows").querySelectorAll("[data-ticket-image]").forEach(button => {
+            button.addEventListener("click", () => {
+                showTicketImage(
+                    button.dataset.ticketId,
+                    Number(button.dataset.attachmentIndex)
+                );
+            });
+        });
+    }
 
 async function updateTicket(id, newStatus) {
   const ticket = tickets.find(t => t.id === id);
